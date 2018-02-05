@@ -14,59 +14,45 @@ type ListNode struct {
 }
 
 func addTwoNumbers(l1 *ListNode, l2 *ListNode) *ListNode {
-	if l1 == nil && l2 == nil {
-		return nil
+	node := &ListNode{
+		Val: 0,
 	}
 
-	node := &ListNode{}
-	if l1 != nil && l2 == nil {
-		node.Val = l1.Val
-		if node.Val >= 10 {
-			node.Val %= 10
-			if l1.Next != nil {
-				l1.Next.Val++
-			} else {
-				node.Next = &ListNode{
-					Val:  1,
-					Next: nil,
-				}
-				return node
-			}
+	curr := node
+
+	p := l1
+	q := l2
+	carry := 0
+
+	for p != nil || q != nil {
+		x := 0
+		y := 0
+		if p != nil {
+			x = p.Val
 		}
-		node.Next = addTwoNumbers(l1.Next, nil)
-	} else if l2 != nil && l1 == nil {
-		node.Val = l2.Val
-		if node.Val >= 10 {
-			node.Val %= 10
-			if l2.Next != nil {
-				l2.Next.Val++
-			} else {
-				node.Next = &ListNode{
-					Val:  1,
-					Next: nil,
-				}
-				return node
-			}
+		if q != nil {
+			y = q.Val
 		}
-		node.Next = addTwoNumbers(nil, l2.Next)
-	} else {
-		node.Val = l1.Val + l2.Val
-		if node.Val >= 10 {
-			node.Val %= 10
-			if l1.Next != nil {
-				l1.Next.Val++
-			} else if l2.Next != nil {
-				l2.Next.Val++
-			} else {
-				node.Next = &ListNode{
-					Val:  1,
-					Next: nil,
-				}
-				return node
-			}
+
+		sum := carry + x + y
+		carry = sum / 10
+		curr.Next = &ListNode{
+			Val: sum % 10,
 		}
-		node.Next = addTwoNumbers(l1.Next, l2.Next)
+		curr = curr.Next
+		if p != nil {
+			p = p.Next
+		}
+		if q != nil {
+			q = q.Next
+		}
 	}
 
-	return node
+	if carry > 0 {
+		curr.Next = &ListNode{
+			Val:  carry,
+			Next: nil,
+		}
+	}
+	return node.Next
 }
